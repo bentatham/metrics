@@ -4,12 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import io.dropwizard.metrics.json.MetricsModule;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.dropwizard.metrics.AbstractGauge;
 import io.dropwizard.metrics.Counter;
 import io.dropwizard.metrics.Gauge;
 import io.dropwizard.metrics.Histogram;
@@ -19,15 +20,13 @@ import io.dropwizard.metrics.MetricRegistry;
 import io.dropwizard.metrics.Snapshot;
 import io.dropwizard.metrics.Timer;
 
-import java.util.concurrent.TimeUnit;
-
 public class MetricsModuleTest {
     private final ObjectMapper mapper = new ObjectMapper().registerModule(
             new MetricsModule(TimeUnit.SECONDS, TimeUnit.MILLISECONDS, false, MetricFilter.ALL));
 
     @Test
     public void serializesGauges() throws Exception {
-        final Gauge<Integer> gauge = new Gauge<Integer>() {
+        final Gauge<Integer> gauge = new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 return 100;
@@ -40,7 +39,7 @@ public class MetricsModuleTest {
 
     @Test
     public void serializesGaugesThatThrowExceptions() throws Exception {
-        final Gauge<Integer> gauge = new Gauge<Integer>() {
+        final Gauge<Integer> gauge = new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 throw new IllegalArgumentException("poops");

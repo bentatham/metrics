@@ -14,7 +14,7 @@ import org.apache.http.nio.conn.NHttpConnectionFactory;
 import org.apache.http.nio.conn.SchemeIOSessionStrategy;
 import org.apache.http.nio.reactor.ConnectingIOReactor;
 
-import io.dropwizard.metrics.Gauge;
+import io.dropwizard.metrics.AbstractGauge;
 import io.dropwizard.metrics.MetricRegistry;
 
 public class InstrumentedNClientConnManager extends PoolingNHttpClientConnectionManager {
@@ -22,7 +22,7 @@ public class InstrumentedNClientConnManager extends PoolingNHttpClientConnection
     public InstrumentedNClientConnManager(final ConnectingIOReactor ioreactor, final NHttpConnectionFactory<ManagedNHttpClientConnection> connFactory, final SchemePortResolver schemePortResolver, final MetricRegistry metricRegistry, final Registry<SchemeIOSessionStrategy> iosessionFactoryRegistry, final long timeToLive, final TimeUnit tunit, final DnsResolver dnsResolver, final String name) {
         super(ioreactor, connFactory, iosessionFactoryRegistry, schemePortResolver, dnsResolver, timeToLive, tunit);
         metricRegistry.register(name(NHttpClientConnectionManager.class, name, "available-connections"),
-                new Gauge<Integer>() {
+                new AbstractGauge<Integer>() {
                     @Override
                     public Integer getValue() {
                         // this acquires a lock on the connection pool; remove if contention sucks
@@ -30,7 +30,7 @@ public class InstrumentedNClientConnManager extends PoolingNHttpClientConnection
                     }
                 });
         metricRegistry.register(name(NHttpClientConnectionManager.class, name, "leased-connections"),
-                new Gauge<Integer>() {
+                new AbstractGauge<Integer>() {
                     @Override
                     public Integer getValue() {
                         // this acquires a lock on the connection pool; remove if contention sucks
@@ -38,7 +38,7 @@ public class InstrumentedNClientConnManager extends PoolingNHttpClientConnection
                     }
                 });
         metricRegistry.register(name(NHttpClientConnectionManager.class, name, "max-connections"),
-                new Gauge<Integer>() {
+                new AbstractGauge<Integer>() {
                     @Override
                     public Integer getValue() {
                         // this acquires a lock on the connection pool; remove if contention sucks
@@ -46,7 +46,7 @@ public class InstrumentedNClientConnManager extends PoolingNHttpClientConnection
                     }
                 });
         metricRegistry.register(name(NHttpClientConnectionManager.class, name, "pending-connections"),
-                new Gauge<Integer>() {
+                new AbstractGauge<Integer>() {
                     @Override
                     public Integer getValue() {
                         // this acquires a lock on the connection pool; remove if contention sucks

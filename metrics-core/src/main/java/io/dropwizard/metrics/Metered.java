@@ -1,10 +1,35 @@
 package io.dropwizard.metrics;
 
+import io.dropwizard.metrics.MetricAttribute.ValueType;
+
 /**
  * An object which maintains mean and exponentially-weighted rate.
  */
 public interface Metered extends Metric, Counting {
-    /**
+
+	public static final MetricAttribute<Metered, Double> RATE_FIFTEEN_MINUTE = new AbstractMetricAttribute<Metered, Double>("m15_rate", ValueType.RATE) {
+		public Double getValue(Metered metric) { 
+			return metric.getFifteenMinuteRate();
+		}
+	};
+	public static final MetricAttribute<Metered, Double> RATE_FIVE_MINUTE = new AbstractMetricAttribute<Metered, Double>("m5_rate", ValueType.RATE) {
+		public Double getValue(Metered metric) { 
+			return metric.getFiveMinuteRate();
+		}
+	};
+	public static final MetricAttribute<Metered, Double> RATE_ONE_MINUTE = new AbstractMetricAttribute<Metered, Double>("m1_rate", ValueType.RATE) {
+		public Double getValue(Metered metric) { 
+			return metric.getOneMinuteRate();
+		}
+	};
+	public static final MetricAttribute<Metered, Double> RATE_MEAN = new AbstractMetricAttribute<Metered, Double>("mean_rate", ValueType.RATE) {
+		public Double getValue(Metered metric) { 
+			return metric.getMeanRate();
+		}
+	};
+	
+	
+	/**
      * Returns the number of events which have been marked.
      *
      * @return the number of events which have been marked

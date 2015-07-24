@@ -10,8 +10,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import io.dropwizard.metrics.AbstractGauge;
 import io.dropwizard.metrics.Counter;
-import io.dropwizard.metrics.Gauge;
 import io.dropwizard.metrics.MetricRegistry;
 import io.dropwizard.metrics.health.HealthCheckRegistry;
 import io.dropwizard.metrics.jetty9.InstrumentedConnectionFactory;
@@ -28,7 +28,7 @@ public class ExampleServer {
                                                                    "doody"));
     private static final Counter COUNTER_2 = REGISTRY.counter(name(ExampleServer.class, "woo"));
     static {
-        REGISTRY.register(name(ExampleServer.class, "boo"), new Gauge<Integer>() {
+        REGISTRY.register(name(ExampleServer.class, "boo"), new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 throw new RuntimeException("asplode!");

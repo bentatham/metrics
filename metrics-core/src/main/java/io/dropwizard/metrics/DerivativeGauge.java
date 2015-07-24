@@ -6,7 +6,7 @@ package io.dropwizard.metrics;
  * @param <F> the base gauge's value type
  * @param <T> the derivative type
  */
-public abstract class DerivativeGauge<F, T> implements Gauge<T> {
+public abstract class DerivativeGauge<F, T> extends AbstractGauge<T> {
     private final Gauge<F> base;
 
     /**

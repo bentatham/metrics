@@ -1,6 +1,9 @@
 package com.codahale.metrics;
 
+import java.util.Set;
+
 import io.dropwizard.metrics.Counting;
+import io.dropwizard.metrics.MetricAttribute;
 
 @Deprecated
 public class Counter implements Metric, Counting {
@@ -33,4 +36,9 @@ public class Counter implements Metric, Counting {
 	public long getCount() {
 		return counter.getCount();
 	}
+
+	@Override
+  public Set<MetricAttribute< ? extends io.dropwizard.metrics.Metric, ? >> getAttributes()  {
+    return counter.getAttributes();
+  }
 }

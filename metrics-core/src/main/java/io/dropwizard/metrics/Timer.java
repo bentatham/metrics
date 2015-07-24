@@ -1,7 +1,12 @@
 package io.dropwizard.metrics;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+
+import io.dropwizard.metrics.MetricAttribute.ValueType;
 
 /**
  * A timer metric which aggregates timing durations and provides duration statistics, plus
@@ -41,7 +46,7 @@ public class Timer implements Metered, Sampling {
             stop();
         }
     }
-
+    
     private final Meter meter;
     private final Histogram histogram;
     private final Clock clock;
@@ -163,5 +168,17 @@ public class Timer implements Metered, Sampling {
             histogram.update(duration);
             meter.mark();
         }
+    }
+    
+    @Override
+    public Set<MetricAttribute<? extends Metric, ?>> getAttributes() {
+    	Set<MetricAttribute<? extends Metric, ?>> result = new LinkedHashSet<>();
+    	result.addAll(histogram.getAttributes(ValueType.DURATION));
+    	result.addAll(meter.getAttributes());
+		return Collections.unmodifiableSet(result);
+    }
+    
+    public <T> T getAttributeValue(MetricAttribute<? super Timer, T> attribute) {
+    	return attribute.getValue(this);
     }
 }

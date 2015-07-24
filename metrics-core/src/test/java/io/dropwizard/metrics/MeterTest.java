@@ -58,4 +58,20 @@ public class MeterTest {
         assertThat(meter.getFifteenMinuteRate())
                 .isEqualTo(0.1988, offset(0.001));
     }
+
+    @Test
+    public void testMetricField() {
+      meter.mark();
+      meter.mark(2);
+      assertThat(Metered.RATE_FIFTEEN_MINUTE.getValue(meter))
+        .isEqualTo(meter.getFifteenMinuteRate());
+      assertThat(Metered.RATE_FIVE_MINUTE.getValue(meter))
+        .isEqualTo(meter.getFiveMinuteRate());
+      assertThat(Metered.RATE_ONE_MINUTE.getValue(meter))
+        .isEqualTo(meter.getOneMinuteRate());
+      assertThat(Metered.RATE_MEAN.getValue(meter))
+        .isEqualTo(meter.getMeanRate());
+      assertThat(Counting.COUNT.getValue(meter))
+        .isEqualTo(meter.getCount());
+    }
 }

@@ -46,4 +46,15 @@ public class CounterTest {
         assertThat(counter.getCount())
                 .isEqualTo(-12);
     }
+
+    @Test
+    public void testAttributes() {
+      assertThat(Counting.COUNT.getValue(counter))
+        .isEqualTo(counter.getCount());
+
+      counter.inc(20);
+
+      assertThat(Counting.COUNT.getValue(counter))
+        .isEqualTo(counter.getCount());
+    }
 }

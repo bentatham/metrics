@@ -160,8 +160,11 @@ public class MetricName implements Comparable<MetricName> {
         if (parts == null || parts.length == 0)
             return MetricName.EMPTY;
 
-        if (parts.length == 1)
+        if (parts.length == 1) {
+        	if (parts[0] == null || parts[0].isEmpty()) 
+        		return MetricName.EMPTY;
             return new MetricName(parts[0], EMPTY_TAGS);
+        }
 
         return new MetricName(buildName(parts), EMPTY_TAGS);
     }

@@ -1,6 +1,9 @@
 package com.codahale.metrics;
 
+import java.util.Set;
+
 import io.dropwizard.metrics.Metered;
+import io.dropwizard.metrics.MetricAttribute;
 
 @Deprecated
 public class Meter implements Metered, Metric {
@@ -42,4 +45,9 @@ public class Meter implements Metered, Metric {
 	public double getOneMinuteRate() {
 		return meter.getOneMinuteRate();
 	}
+	
+  @Override
+  public Set<MetricAttribute< ? extends io.dropwizard.metrics.Metric, ? >> getAttributes()  {
+    return meter.getAttributes();
+  }
 }

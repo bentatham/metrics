@@ -1,5 +1,8 @@
 package io.dropwizard.metrics;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -10,7 +13,18 @@ import java.util.concurrent.atomic.AtomicLong;
  * @see EWMA
  */
 public class Meter implements Metered {
-    private static final long TICK_INTERVAL = TimeUnit.SECONDS.toNanos(5);
+	private static final long TICK_INTERVAL = TimeUnit.SECONDS.toNanos(5);
+
+	private static final Set<MetricAttribute<? extends Metric, ?>> ATTRIBUTES = Collections.unmodifiableSet(
+			new LinkedHashSet<MetricAttribute<? extends Metric, ?>>() {
+				{
+					add(Counting.COUNT);
+					add(Metered.RATE_ONE_MINUTE);
+					add(Metered.RATE_FIVE_MINUTE);
+					add(Metered.RATE_FIFTEEN_MINUTE);
+					add(Metered.RATE_MEAN);
+				}
+			});
 
     private final EWMA m1Rate = EWMA.oneMinuteEWMA();
     private final EWMA m5Rate = EWMA.fiveMinuteEWMA();
@@ -107,5 +121,10 @@ public class Meter implements Metered {
     public double getOneMinuteRate() {
         tickIfNecessary();
         return m1Rate.getRate(TimeUnit.SECONDS);
+    }
+    
+    @Override
+    public Set<MetricAttribute<? extends Metric, ?>> getAttributes() {
+    	return ATTRIBUTES;
     }
 }

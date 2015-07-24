@@ -2,14 +2,14 @@ package io.dropwizard.metrics.jetty9;
 
 import static io.dropwizard.metrics.MetricRegistry.name;
 
+import java.util.concurrent.BlockingQueue;
+
 import org.eclipse.jetty.util.annotation.Name;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
-import io.dropwizard.metrics.Gauge;
+import io.dropwizard.metrics.AbstractGauge;
 import io.dropwizard.metrics.MetricRegistry;
 import io.dropwizard.metrics.RatioGauge;
-
-import java.util.concurrent.BlockingQueue;
 
 public class InstrumentedQueuedThreadPool extends QueuedThreadPool {
     private final MetricRegistry metricRegistry;
@@ -60,13 +60,13 @@ public class InstrumentedQueuedThreadPool extends QueuedThreadPool {
                 return Ratio.of(getThreads() - getIdleThreads(), getMaxThreads());
             }
         });
-        metricRegistry.register(name(QueuedThreadPool.class, getName(), "size"), new Gauge<Integer>() {
+        metricRegistry.register(name(QueuedThreadPool.class, getName(), "size"), new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 return getThreads();
             }
         });
-        metricRegistry.register(name(QueuedThreadPool.class, getName(), "jobs"), new Gauge<Integer>() {
+        metricRegistry.register(name(QueuedThreadPool.class, getName(), "jobs"), new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 // This assumes the QueuedThreadPool is using a BlockingArrayQueue or

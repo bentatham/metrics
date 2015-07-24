@@ -3,8 +3,12 @@ package io.dropwizard.metrics;
 import org.junit.Test;
 
 import io.dropwizard.metrics.RatioGauge;
+import io.dropwizard.metrics.Gauge.GaugeAttribute;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class RatioGaugeTest {
     @Test
@@ -22,6 +26,10 @@ public class RatioGaugeTest {
             protected Ratio getRatio() {
                 return RatioGauge.Ratio.of(2, 4);
             }
+            
+            public Set<MetricAttribute<? extends Metric,?>> getAttributes() {
+            	return Collections.<MetricAttribute<? extends Metric,?>> singleton(new GaugeAttribute<Double>("ratio"));
+            }
         };
 
         assertThat(regular.getValue())
@@ -34,6 +42,10 @@ public class RatioGaugeTest {
             @Override
             protected Ratio getRatio() {
                 return Ratio.of(100, 0);
+            }
+            
+            public Set<MetricAttribute<? extends Metric,?>> getAttributes() {
+            	return Collections.<MetricAttribute<? extends Metric,?>> singleton(new GaugeAttribute<Double>("ratio"));
             }
         };
 
@@ -48,6 +60,10 @@ public class RatioGaugeTest {
             protected Ratio getRatio() {
                 return Ratio.of(10, Double.POSITIVE_INFINITY);
             }
+            
+            public Set<MetricAttribute<? extends Metric,?>> getAttributes() {
+            	return Collections.<MetricAttribute<? extends Metric,?>> singleton(new GaugeAttribute<Double>("ratio"));
+            }
         };
 
         assertThat(infinite.getValue())
@@ -60,6 +76,10 @@ public class RatioGaugeTest {
             @Override
             protected Ratio getRatio() {
                 return Ratio.of(10, Double.NaN);
+            }
+            
+            public Set<MetricAttribute<? extends Metric,?>> getAttributes() {
+            	return Collections.<MetricAttribute<? extends Metric,?>> singleton(new GaugeAttribute<Double>("ratio"));
             }
         };
 

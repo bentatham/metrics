@@ -20,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * A registry of metric instances.
  */
-public class MetricRegistry implements MetricSet {
+public class MetricRegistry extends AbstractMetricSet {
 
     /**
      * @see #name(String, String...)
@@ -254,6 +254,16 @@ public class MetricRegistry implements MetricSet {
      */
     public SortedSet<MetricName> getNames() {
         return Collections.unmodifiableSortedSet(new TreeSet<MetricName>(metrics.keySet()));
+    }
+    
+    @Override
+    public Set<MetricAttribute<? extends Metric, ?>> getAttributes() {
+    	Set<MetricAttribute<? extends Metric, ?>> result = new HashSet<>();
+		for (Metric metric : getMetrics().values())
+		{
+			result.addAll(metric.getAttributes());
+		}
+    	return result;
     }
 
     /**

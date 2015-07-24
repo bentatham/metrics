@@ -39,4 +39,27 @@ public class HistogramTest {
 
         verify(reservoir).update(1);
     }
+
+    @Test
+    public void testMetricField() {
+      Histogram hist = new Histogram(new UniformReservoir());
+      hist.update(1);
+
+      assertThat(Sampling.MAX.getValue(hist))
+        .isEqualTo(hist.getSnapshot().getMax());
+      assertThat(Sampling.MEAN.getValue(hist))
+        .isEqualTo(hist.getSnapshot().getMean());
+      assertThat(Sampling.MIN.getValue(hist))
+        .isEqualTo(hist.getSnapshot().getMin());
+      assertThat(Sampling.PERCENTILE_75.getValue(hist))
+        .isEqualTo(hist.getSnapshot().get75thPercentile());
+      assertThat(Sampling.PERCENTILE_95.getValue(hist))
+        .isEqualTo(hist.getSnapshot().get95thPercentile());
+      assertThat(Sampling.PERCENTILE_98.getValue(hist))
+        .isEqualTo(hist.getSnapshot().get98thPercentile());
+      assertThat(Sampling.PERCENTILE_99.getValue(hist))
+        .isEqualTo(hist.getSnapshot().get99thPercentile());
+      assertThat(Sampling.PERCENTILE_999.getValue(hist))
+        .isEqualTo(hist.getSnapshot().get999thPercentile());
+    }
 }

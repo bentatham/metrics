@@ -15,10 +15,22 @@ package io.dropwizard.metrics;
  * @param <T> the type of the metric's value
  */
 public interface Gauge<T> extends Metric {
-    /**
+
+	/**
      * Returns the metric's current value.
      *
      * @return the metric's current value
      */
     T getValue();
+    
+    public static class GaugeAttribute<T> extends AbstractMetricAttribute<Gauge<T>, T> {
+    	public GaugeAttribute(String label) {
+			super(label);
+		}
+
+		@Override
+    	public T getValue(Gauge<T> metric) {
+    		return metric.getValue();
+    	}
+    }
 }

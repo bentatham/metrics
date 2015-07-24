@@ -1,12 +1,13 @@
 package io.dropwizard.metrics;
 
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * A statistical snapshot of a {@link Snapshot}.
+ * A statistical snapshot of a {@link Sampling}.
  */
 public abstract class Snapshot {
-
     /**
      * Returns the value at the given quantile.
      *

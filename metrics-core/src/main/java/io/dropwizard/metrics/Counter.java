@@ -1,10 +1,19 @@
 package io.dropwizard.metrics;
 
+import java.util.Collections;
+import java.util.Set;
+
+import io.dropwizard.metrics.Counting;
+import io.dropwizard.metrics.LongAdder;
+import io.dropwizard.metrics.Metric;
+
 /**
  * An incrementing and decrementing counter metric.
  */
 public class Counter implements Metric, Counting {
-    private final LongAdder count;
+    private static final Set<MetricAttribute<? extends Metric, ?>> ATTRIBUTES = 
+    		Collections.<MetricAttribute<? extends Metric, ?>> singleton(Counting.COUNT);
+	private final LongAdder count;
 
     public Counter() {
         this.count = LongAdderFactory.create();
@@ -51,4 +60,10 @@ public class Counter implements Metric, Counting {
     public long getCount() {
         return count.sum();
     }
+    
+	@Override
+    public Set<MetricAttribute<? extends Metric, ?>> getAttributes() {
+    	return ATTRIBUTES;
+    }
+	
 }

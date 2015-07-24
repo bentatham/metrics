@@ -1,14 +1,13 @@
 package io.dropwizard.metrics;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import io.dropwizard.metrics.CachedGauge;
-import io.dropwizard.metrics.Gauge;
-
+import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 public class CachedGaugeTest {
     private final AtomicInteger value = new AtomicInteger(0);
