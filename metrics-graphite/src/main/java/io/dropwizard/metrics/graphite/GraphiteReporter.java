@@ -1,17 +1,5 @@
 package io.dropwizard.metrics.graphite;
 
-import io.dropwizard.metrics.Clock;
-import io.dropwizard.metrics.Counter;
-import io.dropwizard.metrics.Gauge;
-import io.dropwizard.metrics.Histogram;
-import io.dropwizard.metrics.Meter;
-import io.dropwizard.metrics.Metered;
-import io.dropwizard.metrics.MetricFilter;
-import io.dropwizard.metrics.MetricRegistry;
-import io.dropwizard.metrics.ScheduledReporter;
-import io.dropwizard.metrics.Snapshot;
-import io.dropwizard.metrics.Timer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,26 +155,12 @@ public class GraphiteReporter extends ScheduledReporter {
     	          graphite.connect();
             }
 
-            for (Map.Entry<MetricName, Gauge> entry : gauges.entrySet()) {
-                reportGauge(entry.getKey(), entry.getValue(), timestamp);
-            }
-
-            for (Map.Entry<MetricName, Counter> entry : counters.entrySet()) {
-                reportCounter(entry.getKey(), entry.getValue(), timestamp);
-            }
-
-            for (Map.Entry<MetricName, Histogram> entry : histograms.entrySet()) {
-                reportHistogram(entry.getKey(), entry.getValue(), timestamp);
-            }
-
-            for (Map.Entry<MetricName, Meter> entry : meters.entrySet()) {
-                reportMetered(entry.getKey(), entry.getValue(), timestamp);
-            }
-
-            for (Map.Entry<MetricName, Timer> entry : timers.entrySet()) {
-                reportTimer(entry.getKey(), entry.getValue(), timestamp);
-            }
-
+            reportMetrics(gauges, timestamp);
+            reportMetrics(counters, timestamp);
+            reportMetrics(histograms, timestamp);
+            reportMetrics(meters, timestamp);
+            reportMetrics(timers, timestamp);
+            
             graphite.flush();
         } catch (Throwable t) {
             LOGGER.warn("Unable to report to Graphite", graphite, t);
@@ -220,76 +194,33 @@ public class GraphiteReporter extends ScheduledReporter {
         }
     }
 
-    private void reportTimer(MetricName name, Timer timer, long timestamp) throws IOException {
-        final Snapshot snapshot = timer.getSnapshot();
-
-        graphite.send(prefix(name, "max"), format(convertDuration(snapshot.getMax())), timestamp);
-        graphite.send(prefix(name, "mean"), format(convertDuration(snapshot.getMean())), timestamp);
-        graphite.send(prefix(name, "min"), format(convertDuration(snapshot.getMin())), timestamp);
-        graphite.send(prefix(name, "stddev"),
-                      format(convertDuration(snapshot.getStdDev())),
-                      timestamp);
-        graphite.send(prefix(name, "p50"),
-                      format(convertDuration(snapshot.getMedian())),
-                      timestamp);
-        graphite.send(prefix(name, "p75"),
-                      format(convertDuration(snapshot.get75thPercentile())),
-                      timestamp);
-        graphite.send(prefix(name, "p95"),
-                      format(convertDuration(snapshot.get95thPercentile())),
-                      timestamp);
-        graphite.send(prefix(name, "p98"),
-                      format(convertDuration(snapshot.get98thPercentile())),
-                      timestamp);
-        graphite.send(prefix(name, "p99"),
-                      format(convertDuration(snapshot.get99thPercentile())),
-                      timestamp);
-        graphite.send(prefix(name, "p999"),
-                      format(convertDuration(snapshot.get999thPercentile())),
-                      timestamp);
-
-        reportMetered(name, timer, timestamp);
+    private <M extends Metric> void reportMetrics(Map<MetricName, M> metrics, long timestamp) throws IOException {
+      for (Map.Entry<MetricName, M> entry : metrics.entrySet()) {
+        reportMetric(entry.getKey(), entry.getValue(), timestamp);
+      }
     }
-
-    private void reportMetered(MetricName name, Metered meter, long timestamp) throws IOException {
-        graphite.send(prefix(name, "count"), format(meter.getCount()), timestamp);
-        graphite.send(prefix(name, "m1_rate"),
-                      format(convertRate(meter.getOneMinuteRate())),
-                      timestamp);
-        graphite.send(prefix(name, "m5_rate"),
-                      format(convertRate(meter.getFiveMinuteRate())),
-                      timestamp);
-        graphite.send(prefix(name, "m15_rate"),
-                      format(convertRate(meter.getFifteenMinuteRate())),
-                      timestamp);
-        graphite.send(prefix(name, "mean_rate"),
-                      format(convertRate(meter.getMeanRate())),
-                      timestamp);
-    }
-
-    private void reportHistogram(MetricName name, Histogram histogram, long timestamp) throws IOException {
-        final Snapshot snapshot = histogram.getSnapshot();
-        graphite.send(prefix(name, "count"), format(histogram.getCount()), timestamp);
-        graphite.send(prefix(name, "max"), format(snapshot.getMax()), timestamp);
-        graphite.send(prefix(name, "mean"), format(snapshot.getMean()), timestamp);
-        graphite.send(prefix(name, "min"), format(snapshot.getMin()), timestamp);
-        graphite.send(prefix(name, "stddev"), format(snapshot.getStdDev()), timestamp);
-        graphite.send(prefix(name, "p50"), format(snapshot.getMedian()), timestamp);
-        graphite.send(prefix(name, "p75"), format(snapshot.get75thPercentile()), timestamp);
-        graphite.send(prefix(name, "p95"), format(snapshot.get95thPercentile()), timestamp);
-        graphite.send(prefix(name, "p98"), format(snapshot.get98thPercentile()), timestamp);
-        graphite.send(prefix(name, "p99"), format(snapshot.get99thPercentile()), timestamp);
-        graphite.send(prefix(name, "p999"), format(snapshot.get999thPercentile()), timestamp);
-    }
-
-    private void reportCounter(MetricName name, Counter counter, long timestamp) throws IOException {
-        graphite.send(prefix(name, "count"), format(counter.getCount()), timestamp);
-    }
-
-    private void reportGauge(MetricName name, Gauge gauge, long timestamp) throws IOException {
-        final String value = format(gauge.getValue());
-        if (value != null) {
-            graphite.send(prefix(name), value, timestamp);
+    
+    private void reportMetric(MetricName name, Metric metric, long timestamp) throws IOException {
+        for (MetricAttribute attribute : metric.getAttributes()) {
+          	Object value = attribute.getValue(metric);
+          	String string;
+          	switch (attribute.getValueType()) {
+          	case DURATION : 
+          		string = format(value.getClass().equals(Double.class) ? convertDuration((Double) value) : convertDuration((Long) value));
+          		break;
+          	case RATE : 
+          		string = format(convertRate((Double) value));
+          		break;
+          	case RAW: 
+          	default:
+          		string = format(value);
+          		break;
+          	}
+          	String label = attribute.getLabel();
+  			    String prefixedName = (label == null || label.isEmpty()) ? prefix(name) : prefix(name, label);
+  			    if (string != null) {
+  			        graphite.send(prefixedName, string, timestamp);
+  			    }
         }
     }
 
@@ -307,8 +238,8 @@ public class GraphiteReporter extends ScheduledReporter {
         } else if (o instanceof Long) {
             return format(((Long) o).longValue());
         } else if (o instanceof Boolean) {
-            return format(((Boolean) o) ? 1 : 0);
-        }
+          return ((Boolean) o) ? "1" : "0";
+        }        
         return null;
     }
 

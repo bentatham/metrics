@@ -1,27 +1,38 @@
 package io.dropwizard.metrics.graphite;
 
-import io.dropwizard.metrics.Clock;
-import io.dropwizard.metrics.Counter;
-import io.dropwizard.metrics.Gauge;
-import io.dropwizard.metrics.Histogram;
-import io.dropwizard.metrics.Meter;
-import io.dropwizard.metrics.MetricFilter;
-import io.dropwizard.metrics.MetricRegistry;
-import io.dropwizard.metrics.Snapshot;
-import io.dropwizard.metrics.Timer;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import io.dropwizard.metrics.*;
-
-import java.net.UnknownHostException;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
-
-import static org.mockito.Mockito.*;
+import io.dropwizard.metrics.AbstractGauge;
+import io.dropwizard.metrics.Clock;
+import io.dropwizard.metrics.Counter;
+import io.dropwizard.metrics.Gauge;
+import io.dropwizard.metrics.Histogram;
+import io.dropwizard.metrics.Meter;
+import io.dropwizard.metrics.Metric;
+import io.dropwizard.metrics.MetricAttribute;
+import io.dropwizard.metrics.MetricAttribute.ValueType;
+import io.dropwizard.metrics.MetricFilter;
+import io.dropwizard.metrics.MetricName;
+import io.dropwizard.metrics.MetricRegistry;
+import io.dropwizard.metrics.Snapshot;
+import io.dropwizard.metrics.Timer;
 
 public class GraphiteReporterTest {
     private final long timestamp = 1000198;
@@ -189,6 +200,7 @@ public class GraphiteReporterTest {
     @Test
     public void reportsCounters() throws Exception {
         final Counter counter = mock(Counter.class);
+        when(counter.getAttributes()).thenCallRealMethod();
         when(counter.getCount()).thenReturn(100L);
 
         reporter.report(this.<Gauge>map(),
@@ -209,6 +221,8 @@ public class GraphiteReporterTest {
     @Test
     public void reportsHistograms() throws Exception {
         final Histogram histogram = mock(Histogram.class);
+        when(histogram.getAttributes()).thenCallRealMethod();
+        when(histogram.getAttributes(any(ValueType.class))).thenCallRealMethod();
         when(histogram.getCount()).thenReturn(1L);
 
         final Snapshot snapshot = mock(Snapshot.class);
@@ -253,6 +267,7 @@ public class GraphiteReporterTest {
     @Test
     public void reportsMeters() throws Exception {
         final Meter meter = mock(Meter.class);
+        when(meter.getAttributes()).thenCallRealMethod();
         when(meter.getCount()).thenReturn(1L);
         when(meter.getOneMinuteRate()).thenReturn(2.0);
         when(meter.getFiveMinuteRate()).thenReturn(3.0);
@@ -281,6 +296,7 @@ public class GraphiteReporterTest {
     @Test
     public void reportsTimers() throws Exception {
         final Timer timer = mock(Timer.class);
+        when(timer.getAttributes()).thenReturn(new Timer().getAttributes());
         when(timer.getCount()).thenReturn(1L);
         when(timer.getMeanRate()).thenReturn(2.0);
         when(timer.getOneMinuteRate()).thenReturn(3.0);
@@ -350,7 +366,8 @@ public class GraphiteReporterTest {
 
     @Test
     public void closesConnectionIfAnUnexpectedExceptionOccurs() throws Exception {
-        final Gauge gauge = mock(Gauge.class);
+        final Gauge gauge = mock(AbstractGauge.class);
+        when(gauge.getAttributes()).thenCallRealMethod();
         when(gauge.getValue()).thenThrow(new RuntimeException("kaboom"));
 
         reporter.report(map("gauge", gauge),
@@ -387,7 +404,8 @@ public class GraphiteReporterTest {
     }
 
     private <T> Gauge gauge(T value) {
-        final Gauge gauge = mock(Gauge.class);
+        final Gauge gauge = mock(AbstractGauge.class);
+        when(gauge.getAttributes()).thenCallRealMethod();
         when(gauge.getValue()).thenReturn(value);
         return gauge;
     }
