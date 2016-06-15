@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * A {@link Gauge} implementation which queries an {@link MBeanServerConnection} for an attribute of an object.
  */
-public class JmxAttributeGauge implements Gauge<Object> {
+public class JmxAttributeGauge extends AbstractGauge<Object> {
     private final MBeanServerConnection mBeanServerConn;
     private final ObjectName objectName;
     private final String attributeName;

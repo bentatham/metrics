@@ -1,5 +1,9 @@
 package io.dropwizard.metrics;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -11,7 +15,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class Meter implements Metered {
     private static final long TICK_INTERVAL = TimeUnit.SECONDS.toNanos(5);
-
+    public static final Set<MetricField> FIELDS = Collections.unmodifiableSet(new HashSet<MetricField>() {{
+        addAll(Arrays.asList(Metered.Field.values()));
+        addAll(Arrays.asList(Counting.Field.values()));
+    }});
+    
     private final EWMA m1Rate = EWMA.oneMinuteEWMA();
     private final EWMA m5Rate = EWMA.fiveMinuteEWMA();
     private final EWMA m15Rate = EWMA.fifteenMinuteEWMA();
@@ -107,5 +115,32 @@ public class Meter implements Metered {
     public double getOneMinuteRate() {
         tickIfNecessary();
         return m1Rate.getRate(TimeUnit.SECONDS);
+    }
+
+    @Override
+    public Set<MetricField> getFields()
+    {
+      return FIELDS;
+    }
+    
+    @Override
+    public Object getField(MetricField field) {
+      if (field == Counting.Field.COUNT) {
+        return getCount();
+      }
+      if (field instanceof Metered.Field) {
+        switch ((Metered.Field) field)
+        {
+        case RATE_15M:
+          return getFifteenMinuteRate();
+        case RATE_1M:
+          return getOneMinuteRate();
+        case RATE_5M:
+          return getFiveMinuteRate();
+        case RATE_MEAN:
+          return getMeanRate();
+        }
+      }
+      throw new IllegalArgumentException(String.valueOf(field));
     }
 }

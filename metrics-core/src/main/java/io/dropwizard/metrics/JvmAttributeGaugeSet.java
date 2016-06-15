@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * A set of gauges for the JVM name, vendor, and uptime.
  */
-public class JvmAttributeGaugeSet implements MetricSet {
+public class JvmAttributeGaugeSet extends AbstractMetricSet {
     private final RuntimeMXBean runtime;
 
     /**
@@ -32,14 +32,14 @@ public class JvmAttributeGaugeSet implements MetricSet {
     public Map<MetricName, Metric> getMetrics() {
         final Map<MetricName, Metric> gauges = new HashMap<MetricName, Metric>();
 
-        gauges.put(MetricName.build("name"), new Gauge<String>() {
+        gauges.put(MetricName.build("name"), new AbstractGauge<String>() {
             @Override
             public String getValue() {
                 return runtime.getName();
             }
         });
 
-        gauges.put(MetricName.build("vendor"), new Gauge<String>() {
+        gauges.put(MetricName.build("vendor"), new AbstractGauge<String>() {
             @Override
             public String getValue() {
                 return String.format(Locale.US,
@@ -51,7 +51,7 @@ public class JvmAttributeGaugeSet implements MetricSet {
             }
         });
 
-        gauges.put(MetricName.build("uptime"), new Gauge<Long>() {
+        gauges.put(MetricName.build("uptime"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return runtime.getUptime();

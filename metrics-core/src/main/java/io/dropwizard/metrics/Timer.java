@@ -1,5 +1,9 @@
 package io.dropwizard.metrics;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +46,12 @@ public class Timer implements Metered, Sampling {
         }
     }
 
+    public static final Set<MetricField> FIELDS = Collections.unmodifiableSet(new HashSet<MetricField>() {{
+        addAll(Arrays.asList(Metered.Field.values()));
+        addAll(Arrays.asList(Counting.Field.values()));
+        addAll(Arrays.asList(Sampling.Field.values()));
+    }});
+    
     private final Meter meter;
     private final Histogram histogram;
     private final Clock clock;
@@ -163,5 +173,18 @@ public class Timer implements Metered, Sampling {
             histogram.update(duration);
             meter.mark();
         }
+    }
+    
+    @Override
+    public Set<MetricField> getFields() {
+      return FIELDS;
+    }
+    
+    @Override
+    public Object getField(MetricField field) {
+      if (FIELDS.contains(field)) {
+        return field.get(this);
+      }
+      throw new IllegalArgumentException(String.valueOf(field));
     }
 }

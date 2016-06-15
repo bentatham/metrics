@@ -1,5 +1,7 @@
 package io.dropwizard.metrics;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 
 import io.dropwizard.metrics.Counter;
@@ -45,5 +47,22 @@ public class CounterTest {
 
         assertThat(counter.getCount())
                 .isEqualTo(-12);
+    }
+
+    @Test
+    public void testMetricField() {
+      assertThat(counter.getField(Counting.Field.COUNT))
+        .isEqualTo(counter.getCount());
+      counter.inc(20);
+      assertThat(counter.getField(Counting.Field.COUNT))
+        .isEqualTo(counter.getCount());
+
+      try {
+        counter.getField(Sampling.Field.MAX);
+        fail("expected IllegalArgumentException");
+      }
+      catch (IllegalArgumentException e) {
+        // expected
+      }
     }
 }

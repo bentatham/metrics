@@ -2,10 +2,10 @@ package io.dropwizard.metrics.jvm;
 
 import static io.dropwizard.metrics.MetricRegistry.name;
 
-import io.dropwizard.metrics.Gauge;
+import io.dropwizard.metrics.AbstractGauge;
+import io.dropwizard.metrics.AbstractMetricSet;
 import io.dropwizard.metrics.Metric;
 import io.dropwizard.metrics.MetricName;
-import io.dropwizard.metrics.MetricSet;
 import io.dropwizard.metrics.RatioGauge;
 
 import java.lang.management.ManagementFactory;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * A set of gauges for JVM memory usage, including stats on heap vs. non-heap memory, plus
  * GC-specific memory pools.
  */
-public class MemoryUsageGaugeSet implements MetricSet {
+public class MemoryUsageGaugeSet extends AbstractMetricSet {
     private static final Pattern WHITESPACE = Pattern.compile("[\\s]+");
 
     private final MemoryMXBean mxBean;
@@ -45,7 +45,7 @@ public class MemoryUsageGaugeSet implements MetricSet {
     public Map<MetricName, Metric> getMetrics() {
         final Map<MetricName, Metric> gauges = new HashMap<MetricName, Metric>();
 
-        gauges.put(MetricName.build("total.init"), new Gauge<Long>() {
+        gauges.put(MetricName.build("total.init"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getHeapMemoryUsage().getInit() +
@@ -53,7 +53,7 @@ public class MemoryUsageGaugeSet implements MetricSet {
             }
         });
 
-        gauges.put(MetricName.build("total.used"), new Gauge<Long>() {
+        gauges.put(MetricName.build("total.used"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getHeapMemoryUsage().getUsed() +
@@ -61,7 +61,7 @@ public class MemoryUsageGaugeSet implements MetricSet {
             }
         });
 
-        gauges.put(MetricName.build("total.max"), new Gauge<Long>() {
+        gauges.put(MetricName.build("total.max"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getHeapMemoryUsage().getMax() +
@@ -69,7 +69,7 @@ public class MemoryUsageGaugeSet implements MetricSet {
             }
         });
 
-        gauges.put(MetricName.build("total.committed"), new Gauge<Long>() {
+        gauges.put(MetricName.build("total.committed"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getHeapMemoryUsage().getCommitted() +
@@ -78,28 +78,28 @@ public class MemoryUsageGaugeSet implements MetricSet {
         });
 
 
-        gauges.put(MetricName.build("heap.init"), new Gauge<Long>() {
+        gauges.put(MetricName.build("heap.init"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getHeapMemoryUsage().getInit();
             }
         });
 
-        gauges.put(MetricName.build("heap.used"), new Gauge<Long>() {
+        gauges.put(MetricName.build("heap.used"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getHeapMemoryUsage().getUsed();
             }
         });
 
-        gauges.put(MetricName.build("heap.max"), new Gauge<Long>() {
+        gauges.put(MetricName.build("heap.max"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getHeapMemoryUsage().getMax();
             }
         });
 
-        gauges.put(MetricName.build("heap.committed"), new Gauge<Long>() {
+        gauges.put(MetricName.build("heap.committed"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getHeapMemoryUsage().getCommitted();
@@ -114,28 +114,28 @@ public class MemoryUsageGaugeSet implements MetricSet {
             }
         });
 
-        gauges.put(MetricName.build("non-heap.init"), new Gauge<Long>() {
+        gauges.put(MetricName.build("non-heap.init"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getNonHeapMemoryUsage().getInit();
             }
         });
 
-        gauges.put(MetricName.build("non-heap.used"), new Gauge<Long>() {
+        gauges.put(MetricName.build("non-heap.used"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getNonHeapMemoryUsage().getUsed();
             }
         });
 
-        gauges.put(MetricName.build("non-heap.max"), new Gauge<Long>() {
+        gauges.put(MetricName.build("non-heap.max"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getNonHeapMemoryUsage().getMax();
             }
         });
 
-        gauges.put(MetricName.build("non-heap.committed"), new Gauge<Long>() {
+        gauges.put(MetricName.build("non-heap.committed"), new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return mxBean.getNonHeapMemoryUsage().getCommitted();
@@ -163,21 +163,21 @@ public class MemoryUsageGaugeSet implements MetricSet {
                            }
                     });
 
-            gauges.put(poolName.resolve("max"),new Gauge<Long>() {
+            gauges.put(poolName.resolve("max"),new AbstractGauge<Long>() {
                 @Override
                 public Long getValue() {
                     return pool.getUsage().getMax();
                 }
             });
 
-            gauges.put(poolName.resolve("used"),new Gauge<Long>() {
+            gauges.put(poolName.resolve("used"),new AbstractGauge<Long>() {
                 @Override
                 public Long getValue() {
                     return pool.getUsage().getUsed();
                 }
             });
 
-            gauges.put(poolName.resolve("committed"),new Gauge<Long>() {
+            gauges.put(poolName.resolve("committed"),new AbstractGauge<Long>() {
                 @Override
                 public Long getValue() {
                     return pool.getUsage().getCommitted();
@@ -186,7 +186,7 @@ public class MemoryUsageGaugeSet implements MetricSet {
 
             // Only register GC usage metrics if the memory pool supports usage statistics.
             if (pool.getCollectionUsage() != null) {
-            	gauges.put(poolName.resolve("used-after-gc"),new Gauge<Long>() {
+            	gauges.put(poolName.resolve("used-after-gc"),new AbstractGauge<Long>() {
                     @Override
                     public Long getValue() {
                         return pool.getCollectionUsage().getUsed();
@@ -194,7 +194,7 @@ public class MemoryUsageGaugeSet implements MetricSet {
                 });
             }
 
-            gauges.put(poolName.resolve("init"),new Gauge<Long>() {
+            gauges.put(poolName.resolve("init"),new AbstractGauge<Long>() {
                 @Override
                 public Long getValue() {
                     return pool.getUsage().getInit();

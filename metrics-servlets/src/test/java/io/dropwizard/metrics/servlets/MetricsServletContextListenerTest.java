@@ -9,9 +9,9 @@ import org.eclipse.jetty.servlet.ServletTester;
 import org.junit.Before;
 import org.junit.Test;
 
+import io.dropwizard.metrics.AbstractGauge;
 import io.dropwizard.metrics.Clock;
 import io.dropwizard.metrics.ExponentiallyDecayingReservoir;
-import io.dropwizard.metrics.Gauge;
 import io.dropwizard.metrics.Meter;
 import io.dropwizard.metrics.MetricRegistry;
 import io.dropwizard.metrics.Timer;
@@ -54,7 +54,7 @@ public class MetricsServletContextListenerTest extends AbstractServletTest {
     public void setUp() throws Exception {
         when(clock.getTick()).thenReturn(100L, 200L, 300L, 400L);
 
-        registry.register("g1", new Gauge<Long>() {
+        registry.register("g1", new AbstractGauge<Long>() {
             @Override
             public Long getValue() {
                 return 100L;

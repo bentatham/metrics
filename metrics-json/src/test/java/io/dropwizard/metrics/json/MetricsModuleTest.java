@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import io.dropwizard.metrics.json.MetricsModule;
 
+import io.dropwizard.metrics.AbstractGauge;
 import io.dropwizard.metrics.Counter;
 import io.dropwizard.metrics.Gauge;
 import io.dropwizard.metrics.Histogram;
@@ -27,7 +28,7 @@ public class MetricsModuleTest {
 
     @Test
     public void serializesGauges() throws Exception {
-        final Gauge<Integer> gauge = new Gauge<Integer>() {
+        final Gauge<Integer> gauge = new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 return 100;
@@ -40,7 +41,7 @@ public class MetricsModuleTest {
 
     @Test
     public void serializesGaugesThatThrowExceptions() throws Exception {
-        final Gauge<Integer> gauge = new Gauge<Integer>() {
+        final Gauge<Integer> gauge = new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 throw new IllegalArgumentException("poops");

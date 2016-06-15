@@ -8,7 +8,7 @@ import static java.lang.Double.isNaN;
  * <p/>
  * If the denominator is zero, not a number, or infinite, the resulting ratio is not a number.
  */
-public abstract class RatioGauge implements Gauge<Double> {
+public abstract class RatioGauge extends AbstractGauge<Double> {
     /**
      * A ratio of one quantity to another.
      */

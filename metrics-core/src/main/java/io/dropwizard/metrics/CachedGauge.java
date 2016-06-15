@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @param <T>    the type of the gauge's value
  */
-public abstract class CachedGauge<T> implements Gauge<T> {
+public abstract class CachedGauge<T> extends AbstractGauge<T> {
     private final Clock clock;
     private final AtomicLong reloadAt;
     private final long timeoutNS;

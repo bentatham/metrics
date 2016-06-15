@@ -1,5 +1,10 @@
 package io.dropwizard.metrics;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A metric which calculates the distribution of a value.
  *
@@ -7,7 +12,12 @@ package io.dropwizard.metrics;
  *      variance</a>
  */
 public class Histogram implements Metric, Sampling, Counting {
-    private final Reservoir reservoir;
+  public static final Set<MetricField> FIELDS = Collections.unmodifiableSet(new HashSet<MetricField>() {{
+      addAll(Arrays.asList(Counting.Field.values()));
+      addAll(Arrays.asList(Sampling.Field.values()));
+   }});
+  
+  private final Reservoir reservoir;
     private final LongAdder count;
 
     /**
@@ -52,5 +62,18 @@ public class Histogram implements Metric, Sampling, Counting {
     @Override
     public Snapshot getSnapshot() {
         return reservoir.getSnapshot();
+    }
+
+    @Override
+    public Set<MetricField> getFields() {
+      return FIELDS;
+    }
+    
+    @Override
+    public Object getField(MetricField field) {
+      if (getFields().contains(field)) {
+        return field.get(this);
+      }
+      throw new IllegalArgumentException(String.valueOf(field));
     }
 }

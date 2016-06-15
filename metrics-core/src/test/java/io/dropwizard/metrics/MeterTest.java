@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.offset;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,5 +58,29 @@ public class MeterTest {
 
         assertThat(meter.getFifteenMinuteRate())
                 .isEqualTo(0.1988, offset(0.001));
+    }
+
+    @Test
+    public void testMetricField() {
+      meter.mark();
+      meter.mark(2);
+      assertThat(meter.getField(Metered.Field.RATE_15M))
+        .isEqualTo(meter.getFifteenMinuteRate());
+      assertThat(meter.getField(Metered.Field.RATE_5M))
+        .isEqualTo(meter.getFiveMinuteRate());
+      assertThat(meter.getField(Metered.Field.RATE_1M))
+        .isEqualTo(meter.getOneMinuteRate());
+      assertThat(meter.getField(Metered.Field.RATE_MEAN))
+        .isEqualTo(meter.getMeanRate());
+      assertThat(meter.getField(Counting.Field.COUNT))
+        .isEqualTo(meter.getCount());
+
+      try {
+        meter.getField(Sampling.Field.MAX);
+        fail("expected IllegalArgumentException");
+      }
+      catch (IllegalArgumentException e) {
+        // expected
+      }
     }
 }

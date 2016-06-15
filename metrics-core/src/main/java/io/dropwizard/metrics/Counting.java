@@ -10,4 +10,13 @@ public interface Counting {
      * @return the current count
      */
     long getCount();
+    
+    enum Field implements MetricField {
+      COUNT;
+      
+      @Override
+      public Object get(Object counting) {
+        return ((Counting) counting).getCount();
+      }
+    }
 }

@@ -1,6 +1,9 @@
 package com.codahale.metrics;
 
+import java.util.Set;
+
 import io.dropwizard.metrics.Counting;
+import io.dropwizard.metrics.MetricField;
 import io.dropwizard.metrics.Reservoir;
 import io.dropwizard.metrics.Sampling;
 
@@ -31,5 +34,15 @@ public class Histogram implements Metric, Sampling, Counting {
 	@Override
 	public Snapshot getSnapshot() {
 		return new Snapshot(hist.getSnapshot());
+	}
+	
+	@Override
+	public Set<MetricField> getFields()	{
+	  return hist.getFields();
+	}
+	
+	@Override
+	public Object getField(MetricField field)	{
+	  return hist.getField(field);
 	}
 }

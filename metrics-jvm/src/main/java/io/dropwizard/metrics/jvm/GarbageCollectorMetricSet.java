@@ -2,10 +2,10 @@ package io.dropwizard.metrics.jvm;
 
 import static io.dropwizard.metrics.MetricRegistry.name;
 
-import io.dropwizard.metrics.Gauge;
+import io.dropwizard.metrics.AbstractGauge;
+import io.dropwizard.metrics.AbstractMetricSet;
 import io.dropwizard.metrics.Metric;
 import io.dropwizard.metrics.MetricName;
-import io.dropwizard.metrics.MetricSet;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * A set of gauges for the counts and elapsed times of garbage collections.
  */
-public class GarbageCollectorMetricSet implements MetricSet {
+public class GarbageCollectorMetricSet extends AbstractMetricSet {
     private static final Pattern WHITESPACE = Pattern.compile("[\\s]+");
 
     private final List<GarbageCollectorMXBean> garbageCollectors;
@@ -41,14 +41,14 @@ public class GarbageCollectorMetricSet implements MetricSet {
         final Map<MetricName, Metric> gauges = new HashMap<MetricName, Metric>();
         for (final GarbageCollectorMXBean gc : garbageCollectors) {
             final String name = WHITESPACE.matcher(gc.getName()).replaceAll("-");
-            gauges.put(name(name, "count"), new Gauge<Long>() {
+            gauges.put(name(name, "count"), new AbstractGauge<Long>() {
                 @Override
                 public Long getValue() {
                     return gc.getCollectionCount();
                 }
             });
 
-            gauges.put(name(name, "time"), new Gauge<Long>() {
+            gauges.put(name(name, "time"), new AbstractGauge<Long>() {
                 @Override
                 public Long getValue() {
                     return gc.getCollectionTime();

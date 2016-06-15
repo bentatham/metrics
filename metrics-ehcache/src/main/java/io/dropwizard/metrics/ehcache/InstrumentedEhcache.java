@@ -2,7 +2,7 @@ package io.dropwizard.metrics.ehcache;
 
 import static io.dropwizard.metrics.MetricRegistry.name;
 
-import io.dropwizard.metrics.Gauge;
+import io.dropwizard.metrics.AbstractGauge;
 import io.dropwizard.metrics.MetricName;
 import io.dropwizard.metrics.MetricRegistry;
 import io.dropwizard.metrics.Timer;
@@ -121,7 +121,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
 
         final MetricName prefix = name(cache.getClass(), cache.getName());
         registry.register(prefix.resolve("hits"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().cacheHitCount();
@@ -129,7 +129,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("in-memory-hits"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().localHeapHitCount();
@@ -137,7 +137,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("off-heap-hits"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().localOffHeapHitCount();
@@ -145,7 +145,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("on-disk-hits"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().localDiskHitCount();
@@ -153,7 +153,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("misses"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().cacheMissCount();
@@ -161,7 +161,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("in-memory-misses"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().localHeapMissCount();
@@ -169,7 +169,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("off-heap-misses"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().localOffHeapMissCount();
@@ -177,7 +177,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("on-disk-misses"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().localDiskMissCount();
@@ -185,7 +185,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("objects"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().getSize();
@@ -193,7 +193,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("in-memory-objects"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().getLocalHeapSize();
@@ -201,7 +201,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("off-heap-objects"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().getLocalOffHeapSize();
@@ -209,7 +209,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("on-disk-objects"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().getLocalDiskSize();
@@ -217,7 +217,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("mean-get-time"),
-                          new Gauge<Double>() {
+                          new AbstractGauge<Double>() {
                               @Override
                               public Double getValue() {
                                   return cache.getStatistics().cacheGetOperation().latency().average().value();
@@ -225,7 +225,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("mean-search-time"),
-                          new Gauge<Double>() {
+                          new AbstractGauge<Double>() {
                               @Override
                               public Double getValue() {
                                   return cache.getStatistics().cacheSearchOperation().latency().average().value();
@@ -233,7 +233,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("eviction-count"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().cacheEvictionOperation().count().value();
@@ -241,7 +241,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("searches-per-second"),
-                          new Gauge<Double>() {
+                          new AbstractGauge<Double>() {
                               @Override
                               public Double getValue() {
                                   return cache.getStatistics().cacheSearchOperation().rate().value();
@@ -249,7 +249,7 @@ public class InstrumentedEhcache extends EhcacheDecoratorAdapter {
                           });
 
         registry.register(prefix.resolve("writer-queue-size"),
-                          new Gauge<Long>() {
+                          new AbstractGauge<Long>() {
                               @Override
                               public Long getValue() {
                                   return cache.getStatistics().getWriterQueueLength();

@@ -12,7 +12,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 
-import io.dropwizard.metrics.Gauge;
+import io.dropwizard.metrics.AbstractGauge;
 import io.dropwizard.metrics.MetricRegistry;
 
 import java.util.concurrent.TimeUnit;
@@ -62,7 +62,7 @@ public class InstrumentedHttpClientConnectionManager extends PoolingHttpClientCo
         this.metricsRegistry = metricsRegistry;
         this.name = name;
         metricsRegistry.register(name(HttpClientConnectionManager.class, name, "available-connections"),
-                                 new Gauge<Integer>() {
+                                 new AbstractGauge<Integer>() {
                                      @Override
                                      public Integer getValue() {
                                          // this acquires a lock on the connection pool; remove if contention sucks
@@ -70,7 +70,7 @@ public class InstrumentedHttpClientConnectionManager extends PoolingHttpClientCo
                                      }
                                  });
         metricsRegistry.register(name(HttpClientConnectionManager.class, name, "leased-connections"),
-                                 new Gauge<Integer>() {
+                                 new AbstractGauge<Integer>() {
                                      @Override
                                      public Integer getValue() {
                                          // this acquires a lock on the connection pool; remove if contention sucks
@@ -78,7 +78,7 @@ public class InstrumentedHttpClientConnectionManager extends PoolingHttpClientCo
                                      }
                                  });
         metricsRegistry.register(name(HttpClientConnectionManager.class, name, "max-connections"),
-                                 new Gauge<Integer>() {
+                                 new AbstractGauge<Integer>() {
                                      @Override
                                      public Integer getValue() {
                                          // this acquires a lock on the connection pool; remove if contention sucks
@@ -86,7 +86,7 @@ public class InstrumentedHttpClientConnectionManager extends PoolingHttpClientCo
                                      }
                                  });
         metricsRegistry.register(name(HttpClientConnectionManager.class, name, "pending-connections"),
-                                 new Gauge<Integer>() {
+                                 new AbstractGauge<Integer>() {
                                      @Override
                                      public Integer getValue() {
                                          // this acquires a lock on the connection pool; remove if contention sucks

@@ -1,5 +1,8 @@
 package io.dropwizard.metrics;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * An incrementing and decrementing counter metric.
  */
@@ -50,5 +53,18 @@ public class Counter implements Metric, Counting {
     @Override
     public long getCount() {
         return count.sum();
+    }
+
+    @Override
+    public Set<MetricField> getFields()
+    {
+      return Collections.<MetricField> singleton(Counting.Field.COUNT);
+    }
+    
+    @Override
+    public Object getField(MetricField field) {
+      if (field == Counting.Field.COUNT)
+        return field.get(this);
+      throw new IllegalArgumentException(field.toString());
     }
 }

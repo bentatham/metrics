@@ -1,5 +1,6 @@
 package io.dropwizard.metrics;
 
+import io.dropwizard.metrics.AbstractMetricSet;
 import io.dropwizard.metrics.Counter;
 import io.dropwizard.metrics.ExponentiallyDecayingReservoir;
 import io.dropwizard.metrics.Gauge;
@@ -20,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * A registry of metric instances.
  */
-public class MetricRegistry implements MetricSet {
+public class MetricRegistry extends AbstractMetricSet {
 
     /**
      * @see #name(String, String...)

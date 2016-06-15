@@ -54,4 +54,43 @@ public interface Metered extends Metric, Counting {
      *         occurred since the meter was created
      */
     double getOneMinuteRate();
+    
+    enum Field implements MetricField {
+      RATE_15M(new MetricField() {
+        @Override
+        public Object get(Object metric) {
+          return ((Metered) metric).getFifteenMinuteRate();
+        } 
+      }), 
+      RATE_5M(new MetricField() {
+        @Override
+        public Object get(Object metric) {
+          return ((Metered) metric).getFiveMinuteRate();
+        } 
+      }),
+      RATE_1M(new MetricField() {
+        @Override
+        public Object get(Object metric) {
+          return ((Metered) metric).getOneMinuteRate();
+        } 
+      }),
+      RATE_MEAN(new MetricField() {
+        @Override
+        public Object get(Object metric) {
+          return ((Metered) metric).getMeanRate();
+        } 
+      });
+      
+      private MetricField m_provider;
+      
+      Field(MetricField provider)
+      {
+        m_provider = provider;
+      }
+      
+      @Override
+      public Object get(Object metric) {
+        return m_provider.get(metric);
+      }
+    }
 }

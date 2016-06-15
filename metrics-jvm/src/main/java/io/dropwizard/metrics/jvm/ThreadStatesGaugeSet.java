@@ -2,10 +2,10 @@ package io.dropwizard.metrics.jvm;
 
 import static io.dropwizard.metrics.MetricRegistry.name;
 
-import io.dropwizard.metrics.Gauge;
+import io.dropwizard.metrics.AbstractGauge;
+import io.dropwizard.metrics.AbstractMetricSet;
 import io.dropwizard.metrics.Metric;
 import io.dropwizard.metrics.MetricName;
-import io.dropwizard.metrics.MetricSet;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * A set of gauges for the number of threads in their various states and deadlock detection.
  */
-public class ThreadStatesGaugeSet implements MetricSet {
+public class ThreadStatesGaugeSet extends AbstractMetricSet {
 
     // do not compute stack traces.
     private final static int STACK_TRACE_DEPTH = 0;
@@ -51,7 +51,7 @@ public class ThreadStatesGaugeSet implements MetricSet {
 
         for (final Thread.State state : Thread.State.values()) {
             gauges.put(name(state.toString().toLowerCase(), "count"),
-                       new Gauge<Integer>() {
+                       new AbstractGauge<Integer>() {
                            @Override
                            public Integer getValue() {
                                return getThreadCount(state);
@@ -59,28 +59,28 @@ public class ThreadStatesGaugeSet implements MetricSet {
                        });
         }
 
-        gauges.put(MetricName.build("count"), new Gauge<Integer>() {
+        gauges.put(MetricName.build("count"), new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 return threads.getThreadCount();
             }
         });
 
-        gauges.put(MetricName.build("daemon.count"), new Gauge<Integer>() {
+        gauges.put(MetricName.build("daemon.count"), new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 return threads.getDaemonThreadCount();
             }
         });
 
-        gauges.put(MetricName.build("deadlock.count"), new Gauge<Integer>() {
+        gauges.put(MetricName.build("deadlock.count"), new AbstractGauge<Integer>() {
             @Override
             public Integer getValue() {
                 return deadlockDetector.getDeadlockedThreads().size();
             }
         });
 
-        gauges.put(MetricName.build("deadlocks"), new Gauge<Set<String>>() {
+        gauges.put(MetricName.build("deadlocks"), new AbstractGauge<Set<String>>() {
             @Override
             public Set<String> getValue() {
                 return deadlockDetector.getDeadlockedThreads();

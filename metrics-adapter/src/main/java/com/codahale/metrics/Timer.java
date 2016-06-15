@@ -1,10 +1,12 @@
 package com.codahale.metrics;
 
 import java.io.Closeable;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import io.dropwizard.metrics.Metered;
+import io.dropwizard.metrics.MetricField;
 import io.dropwizard.metrics.Sampling;
 
 @Deprecated
@@ -77,4 +79,14 @@ public class Timer implements Metered, Metric, Sampling {
 	public Context time() {
 		return new Context(timer.time());
 	}
+	
+  @Override
+  public Set<MetricField> getFields() {
+    return timer.getFields();
+  }
+  
+  @Override
+  public Object getField(MetricField field) {
+    return timer.getField(field);
+  }
 }

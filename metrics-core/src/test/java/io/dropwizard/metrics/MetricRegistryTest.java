@@ -262,7 +262,7 @@ public class MetricRegistryTest {
 
     @Test
     public void registersMultipleMetrics() throws Exception {
-        final MetricSet metrics = new MetricSet() {
+        final MetricSet metrics = new AbstractMetricSet() {
             @Override
             public Map<MetricName, Metric> getMetrics() {
                 final Map<MetricName, Metric> metrics = new HashMap<MetricName, Metric>();
@@ -283,7 +283,7 @@ public class MetricRegistryTest {
         final MetricName myCounter = MetricName.build("my.counter");
         final MetricName myGauge = MetricName.build("my.gauge");
 
-        final MetricSet metrics = new MetricSet() {
+        final MetricSet metrics = new AbstractMetricSet() {
             @Override
             public Map<MetricName, Metric> getMetrics() {
                 final Map<MetricName, Metric> metrics = new HashMap<MetricName, Metric>();
@@ -301,7 +301,7 @@ public class MetricRegistryTest {
 
     @Test
     public void registersRecursiveMetricSets() throws Exception {
-        final MetricSet inner = new MetricSet() {
+        final MetricSet inner = new AbstractMetricSet() {
             @Override
             public Map<MetricName, Metric> getMetrics() {
                 final Map<MetricName, Metric> metrics = new HashMap<MetricName, Metric>();
@@ -310,7 +310,7 @@ public class MetricRegistryTest {
             }
         };
 
-        final MetricSet outer = new MetricSet() {
+        final MetricSet outer = new AbstractMetricSet() {
             @Override
             public Map<MetricName, Metric> getMetrics() {
                 final Map<MetricName, Metric> metrics = new HashMap<MetricName, Metric>();
@@ -376,7 +376,7 @@ public class MetricRegistryTest {
 
     @Test
     public void concatenatesClassesWithoutCanonicalNamesWithStrings() throws Exception {
-        final Gauge<String> g = new Gauge<String>() {
+        final Gauge<String> g = new AbstractGauge<String>() {
             @Override
             public String getValue() {
                 return null;

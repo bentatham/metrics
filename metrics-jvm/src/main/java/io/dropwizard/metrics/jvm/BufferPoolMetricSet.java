@@ -5,10 +5,10 @@ import static io.dropwizard.metrics.MetricRegistry.name;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.dropwizard.metrics.AbstractMetricSet;
 import io.dropwizard.metrics.JmxAttributeGauge;
 import io.dropwizard.metrics.Metric;
 import io.dropwizard.metrics.MetricName;
-import io.dropwizard.metrics.MetricSet;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
@@ -23,7 +23,7 @@ import java.util.Map;
  * <p>
  * These JMX objects are only available on Java 7 and above.
  */
-public class BufferPoolMetricSet implements MetricSet {
+public class BufferPoolMetricSet extends AbstractMetricSet {
     private static final Logger LOGGER = LoggerFactory.getLogger(BufferPoolMetricSet.class);
     private static final String[] ATTRIBUTES = { "Count", "MemoryUsed", "TotalCapacity" };
     private static final String[] NAMES = { "count", "used", "capacity" };

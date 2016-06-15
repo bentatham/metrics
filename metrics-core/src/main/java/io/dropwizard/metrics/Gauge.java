@@ -21,4 +21,13 @@ public interface Gauge<T> extends Metric {
      * @return the metric's current value
      */
     T getValue();
+    
+    enum Field implements MetricField {
+      VALUE;
+      
+      @Override
+      public Object get(Object metric) {
+        return ((Gauge<?>) metric).getValue();
+      }
+    }
 }

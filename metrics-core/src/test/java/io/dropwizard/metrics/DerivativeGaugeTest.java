@@ -8,7 +8,7 @@ import io.dropwizard.metrics.Gauge;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DerivativeGaugeTest {
-    private final Gauge<String> gauge1 = new Gauge<String>() {
+    private final Gauge<String> gauge1 = new AbstractGauge<String>() {
         @Override
         public String getValue() {
             return "woo";
